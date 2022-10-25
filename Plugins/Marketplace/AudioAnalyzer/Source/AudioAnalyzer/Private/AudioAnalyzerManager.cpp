@@ -1467,8 +1467,8 @@ void UAudioAnalyzerManager::GetPitchTrackingByChannel(UChannelFResult*& Fundamen
 FString UAudioAnalyzerManager::GetAndroidProjectFolder()
 {
 #if PLATFORM_ANDROID
-	extern FString GFilePathBase;
-	return GFilePathBase + FString("/UE4Game/") + FApp::GetProjectName() + FString("/");
+	//extern FString GFilePathBase;
+	return /*GFilePathBase + */FString("/UE4Game/") + FApp::GetProjectName() + FString("/");
 #else
 	return FString("");
 #endif
