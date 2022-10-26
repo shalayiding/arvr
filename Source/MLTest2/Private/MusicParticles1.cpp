@@ -6,8 +6,8 @@
 #include "Kismet/KismetStringLibrary.h"
 #include "AudioAnalyzerManager.h"
 
-constexpr int START_NOTE = -33;
-constexpr int END_NOTE = 40;
+constexpr int START_NOTE = -29;
+constexpr int END_NOTE = 43;
 
 // Sets default values
 AMusicParticles1::AMusicParticles1()
@@ -37,7 +37,7 @@ void AMusicParticles1::BeginPlay()
 	}
 	else
 	{
-		initSuccess = AAManager->InitCapturerAudio();
+		initSuccess = AAManager->InitCapturerAudioEx(SampleRate);
 	}
 
 	if (!initSuccess)
