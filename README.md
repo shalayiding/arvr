@@ -25,4 +25,4 @@ in the directory you want to save the project to.
 
 Various Errors and Fixes:
 -----------------------------------------
-If the lighting fails to build with Lightmass needs rebuilding or something to that extent, open the .sln for the project and build the UnrealLightmass module found in the Programs folder. 
+If the lighting fails to build with Lightmass needs rebuilding or something to that extent, open the .sln for the project,set the build options in the top left to Development Editor and Win64,build the UnrealLightmass module found in the Programs folder.
