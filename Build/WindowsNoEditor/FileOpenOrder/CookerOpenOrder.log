@@ -169,34 +169,34 @@
 "../../Plugins/Editor/SpeedTreeImporter/Content/SpeedTree9/SpeedTreeBillboardMaster.uasset" 168
 "../../Plugins/Editor/SpeedTreeImporter/Content/SpeedTree9/SpeedTreeCameraFacing.uasset" 169
 "../../Plugins/Editor/SpeedTreeImporter/Content/SpeedTree9/SpeedTreeMaster.uasset" 170
-"../../../Engine/Content/BasicShapes/Cylinder.uasset" 171
-"../../../Engine/Content/ArtTools/RenderToTexture/Materials/Debug/M_Emissive_Color.uasset" 172
+"../../../Engine/Content/ArtTools/RenderToTexture/Materials/Debug/M_Emissive_Color.uasset" 171
+"../../../Engine/Content/BasicShapes/Cylinder.uasset" 172
 "../../Plugins/Lumin/MagicLeapPassableWorld/Content/MagicLeapARPinInfoActor.uasset" 173
 "../../../Engine/Content/Functions/Engine_MaterialFunctions02/Utility/BreakOutFloat4Components.uasset" 174
 "../../../Engine/Content/Functions/Engine_MaterialFunctions02/Utility/MakeFloat3.uasset" 175
 "../../Plugins/Runtime/Oculus/OculusVR/Content/Materials/OculusMR_ChromaKey.uasset" 176
 "../../Plugins/Runtime/Oculus/OculusVR/Content/Materials/OculusMR_OpaqueColoredMaterial.uasset" 177
 "../../Plugins/Runtime/Oculus/OculusVR/Content/Materials/PokeAHoleMaterial.uasset" 178
-"../../../../../../Users/mssvr1/Documents/Unreal Projects/CastleTest/arvr 4.26/Content/ShriyaAssets/SM_Castle/Castle.uasset" 179
-"../../../Engine/Content/MapTemplates/Sky/DaylightAmbientCubemap.uasset" 180
-"../../../Engine/Content/BasicShapes/Plane.uasset" 181
+"../../../Engine/Content/MapTemplates/Sky/DaylightAmbientCubemap.uasset" 179
+"../../../Engine/Content/BasicShapes/Plane.uasset" 180
+"../../../Engine/Content/BasicShapes/Cube.uasset" 181
 "../../../../../../Users/mssvr1/Documents/Unreal Projects/CastleTest/arvr 4.26/Content/ShriyaAssets/SM_Castle/M_Castle.uasset" 182
-"../../../Engine/Content/BasicShapes/BasicShapeMaterial.uasset" 183
-"../../../../../../Users/mssvr1/Documents/Unreal Projects/CastleTest/arvr 4.26/Content/Level/EntryLevel_BuiltData.uasset" 184
-"../../../../../../Users/mssvr1/Documents/Unreal Projects/CastleTest/arvr 4.26/Content/Materials/ParticleMaterial1.uasset" 185
-"../../../Engine/Content/EngineMeshes/Sphere.uasset" 186
-"../../../../../../Users/mssvr1/Documents/Unreal Projects/CastleTest/arvr 4.26/Content/ParticleSystems/ParticleSystem2.uasset" 187
-"../../../../../../Users/mssvr1/Documents/Unreal Projects/CastleTest/arvr 4.26/Content/Materials/SkullMaterial.uasset" 188
-"../../../Engine/Content/EditorBlueprintResources/StandardMacros.uasset" 189
-"../../../../../../Users/mssvr1/Documents/Unreal Projects/CastleTest/arvr 4.26/Content/Blueprint/SkullBlueprint.uasset" 190
-"../../../../../../Users/mssvr1/Documents/Unreal Projects/CastleTest/arvr 4.26/Content/Level/EntryLevel.umap" 191
-"../../../Engine/Content/BasicShapes/Cube.uasset" 192
-"../../../../../../Users/mssvr1/Documents/Unreal Projects/CastleTest/arvr 4.26/Content/Materials/M_Cube.uasset" 193
-"../../../../../../Users/mssvr1/Documents/Unreal Projects/CastleTest/arvr 4.26/Content/Level/PicturesStage_BuiltData.uasset" 194
-"../../../../../../Users/mssvr1/Documents/Unreal Projects/CastleTest/arvr 4.26/Content/Geometry/Stage/SM_MERGED_AudienceStage_Side_11.uasset" 195
-"../../../../../../Users/mssvr1/Documents/Unreal Projects/CastleTest/arvr 4.26/Content/Materials/GenericHMDMaterial.uasset" 196
-"../../../../../../Users/mssvr1/Documents/Unreal Projects/CastleTest/arvr 4.26/Content/Blueprint/GenericHMD.uasset" 197
-"../../../Engine/Content/EditorBlueprintResources/ActorMacros.uasset" 198
-"../../../../../../Users/mssvr1/Documents/Unreal Projects/CastleTest/arvr 4.26/Content/Blueprint/BP_XRPawn.uasset" 199
-"../../../../../../Users/mssvr1/Documents/Unreal Projects/CastleTest/arvr 4.26/Content/Blueprint/PicturesAtExhibitionMode.uasset" 200
-"../../../../../../Users/mssvr1/Documents/Unreal Projects/CastleTest/arvr 4.26/Content/Level/PicturesStage.umap" 201
+"../../../../../../Users/mssvr1/Documents/Unreal Projects/CastleTest/arvr 4.26/Content/Materials/M_Cube.uasset" 183
+"../../../Engine/Content/BasicShapes/BasicShapeMaterial.uasset" 184
+"../../../../../../Users/mssvr1/Documents/Unreal Projects/CastleTest/arvr 4.26/Content/Level/PicturesStage_BuiltData.uasset" 185
+"../../../../../../Users/mssvr1/Documents/Unreal Projects/CastleTest/arvr 4.26/Content/Geometry/Stage/SM_MERGED_AudienceStage_Side_11.uasset" 186
+"../../../Engine/Content/EditorBlueprintResources/StandardMacros.uasset" 187
+"../../../Engine/Content/EditorBlueprintResources/ActorMacros.uasset" 188
+"../../../../../../Users/mssvr1/Documents/Unreal Projects/CastleTest/arvr 4.26/Content/Materials/GenericHMDMaterial.uasset" 189
+"../../../../../../Users/mssvr1/Documents/Unreal Projects/CastleTest/arvr 4.26/Content/Blueprint/GenericHMD.uasset" 190
+"../../../../../../Users/mssvr1/Documents/Unreal Projects/CastleTest/arvr 4.26/Content/Blueprint/BP_XRPawn.uasset" 191
+"../../../../../../Users/mssvr1/Documents/Unreal Projects/CastleTest/arvr 4.26/Content/Blueprint/PicturesAtExhibitionMode.uasset" 192
+"../../../../../../Users/mssvr1/Documents/Unreal Projects/CastleTest/arvr 4.26/Content/Level/PicturesStage.umap" 193
+"../../../../../../Users/mssvr1/Documents/Unreal Projects/CastleTest/arvr 4.26/Content/ShriyaAssets/SM_Castle/Castle.uasset" 194
+"../../../../../../Users/mssvr1/Documents/Unreal Projects/CastleTest/arvr 4.26/Content/Level/EntryLevel_BuiltData.uasset" 195
+"../../../../../../Users/mssvr1/Documents/Unreal Projects/CastleTest/arvr 4.26/Content/Materials/ParticleMaterial1.uasset" 196
+"../../../Engine/Content/EngineMeshes/Sphere.uasset" 197
+"../../../../../../Users/mssvr1/Documents/Unreal Projects/CastleTest/arvr 4.26/Content/ParticleSystems/ParticleSystem2.uasset" 198
+"../../../../../../Users/mssvr1/Documents/Unreal Projects/CastleTest/arvr 4.26/Content/Materials/SkullMaterial.uasset" 199
+"../../../../../../Users/mssvr1/Documents/Unreal Projects/CastleTest/arvr 4.26/Content/Blueprint/SkullBlueprint.uasset" 200
+"../../../../../../Users/mssvr1/Documents/Unreal Projects/CastleTest/arvr 4.26/Content/Level/EntryLevel.umap" 201
