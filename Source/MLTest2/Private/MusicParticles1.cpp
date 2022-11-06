@@ -34,6 +34,8 @@ void AMusicParticles1::BeginPlay()
 	AAManager = NewObject<UAudioAnalyzerManager>(this, TEXT("AAManager"));
 
 	IsServer = UKismetSystemLibrary::IsServer(GetWorld());
+	bool isWindows = UGameplayStatics::GetPlatformName() == "Windows";
+
 	bool initSuccess;
 	if (shouldPlayFile) {
 		initSuccess = AAManager->InitPlayerAudio(AudioFilename);
@@ -45,7 +47,13 @@ void AMusicParticles1::BeginPlay()
 	}
 	else
 	{
-		initSuccess = AAManager->InitStreamAudio(1, SampleRate, EAudioDepth::B_16, EAudioFormat::Signed_Int, 1.0f, true);
+		initSuccess = AAManager->InitStreamAudio(
+			1,
+			SampleRate,
+			EAudioDepth::B_16,
+			EAudioFormat::Signed_Int,
+			1.0f,
+			isWindows);
 	}
 
 	if (!initSuccess)
@@ -77,7 +85,7 @@ void AMusicParticles1::BeginPlay()
 	}
 	else
 	{
-		AAManager->OpenStreamCapture(true);
+		AAManager->OpenStreamCapture(isWindows);
 		UE_LOG(LogTemp, Display, TEXT("Started playback!"));
 	}
 }
