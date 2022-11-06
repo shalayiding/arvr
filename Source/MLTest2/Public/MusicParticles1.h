@@ -7,6 +7,8 @@
 #include "Particles/ParticleSystemComponent.h"
 #include "FFTBins.h"
 #include "Kismet/GameplayStatics.h"
+#include "MPAudioCaptureComponent.h"
+#include "AudioAnalyzerManager.h"
 #include "MusicParticles1.generated.h"
 
 class UAudioAnalyzerManager;
@@ -39,12 +41,18 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FSpawnParticleDelegate SpawnParticleDelegate;
 
+	UFUNCTION()
+	void OnGenerateAudio(const TArray<uint8>& bytes);
+
+	UFUNCTION(NetMulticast, Unreliable)
+	void MulticastReceiveAudio(const TArray<uint8>& bytes);
+
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadonly)
 	int FFTSamples = 8192;
 
 	UPROPERTY(EditAnywhere, BlueprintReadonly)
-	int SampleRate = 44100;
+	int SampleRate = 48000;
 
 	UPROPERTY(EditAnywhere, BlueprintReadonly)
 	FString AudioFilename = FString();
@@ -62,6 +70,9 @@ private:
 
 	UPROPERTY()
 	TArray<FFTBins> fftHist;
+
+	UPROPERTY()
+	bool IsServer;
 
 private:
 	int NoteToBin(float index);

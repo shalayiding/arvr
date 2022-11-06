@@ -4,7 +4,7 @@
 #include "MusicParticles1.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/KismetStringLibrary.h"
-#include "AudioAnalyzerManager.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 constexpr int START_NOTE = -29;
 constexpr int END_NOTE = 43;
@@ -14,6 +14,8 @@ AMusicParticles1::AMusicParticles1()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+	bReplicates = true;
+	bAlwaysRelevant = true;
 
 	for (int note = START_NOTE; note < END_NOTE; note++)
 	{
@@ -31,13 +33,19 @@ void AMusicParticles1::BeginPlay()
 
 	AAManager = NewObject<UAudioAnalyzerManager>(this, TEXT("AAManager"));
 
+	IsServer = UKismetSystemLibrary::IsServer(GetWorld());
 	bool initSuccess;
 	if (shouldPlayFile) {
 		initSuccess = AAManager->InitPlayerAudio(AudioFilename);
 	}
+	else if (IsServer)
+	{
+		initSuccess = AAManager->InitCapturerAudioEx(SampleRate, EAudioDepth::B_16, EAudioFormat::Signed_Int, 1.0f);
+		AAManager->OnCapturedData.AddDynamic(this, &AMusicParticles1::OnGenerateAudio);
+	}
 	else
 	{
-		initSuccess = AAManager->InitCapturerAudioEx(SampleRate);
+		initSuccess = AAManager->InitStreamAudio(1, SampleRate, EAudioDepth::B_16, EAudioFormat::Signed_Int, 1.0f, true);
 	}
 
 	if (!initSuccess)
@@ -60,10 +68,30 @@ void AMusicParticles1::BeginPlay()
 	if (shouldPlayFile)
 	{
 		AAManager->Play();
+		UE_LOG(LogTemp, Display, TEXT("Playing local test file!"));
+	}
+	else if (IsServer)
+	{
+		AAManager->StartCapture(false, true);
+		UE_LOG(LogTemp, Display, TEXT("Started recording!"));
 	}
 	else
 	{
-		AAManager->StartCapture();
+		AAManager->OpenStreamCapture(true);
+		UE_LOG(LogTemp, Display, TEXT("Started playback!"));
+	}
+}
+
+void AMusicParticles1::OnGenerateAudio(const TArray<uint8>& bytes)
+{
+	MulticastReceiveAudio(bytes);
+}
+
+void AMusicParticles1::MulticastReceiveAudio_Implementation(const TArray<uint8>& bytes)
+{
+	if (!IsServer)
+	{
+		AAManager->FeedStreamCapture(bytes);
 	}
 }
 
@@ -72,7 +100,7 @@ void AMusicParticles1::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (!AAManager || !(AAManager->IsCapturing() || AAManager->IsPlaying()))
+	if (!AAManager || !(AAManager->IsStreamCapturing() || AAManager->IsCapturing() || AAManager->IsPlaying()))
 	{
 		return;
 	}
@@ -99,7 +127,7 @@ void AMusicParticles1::Tick(float DeltaTime)
 		NoteAmplitudes[noteIndex - START_NOTE] = (ampAccum * 20.0f / (highBin - lowBin));
 	}
 
-	float spectralDiff = GetSpectralDifference(NoteAmplitudes);
+	// float spectralDiff = GetSpectralDifference(NoteAmplitudes);
 }
 
 int AMusicParticles1::NoteToBin(float index)
