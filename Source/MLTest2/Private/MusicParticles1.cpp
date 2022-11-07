@@ -135,7 +135,7 @@ void AMusicParticles1::Tick(float DeltaTime)
 		NoteAmplitudes[noteIndex - START_NOTE] = (ampAccum * 20.0f / (highBin - lowBin));
 	}
 
-	// float spectralDiff = GetSpectralDifference(NoteAmplitudes);
+	float spectralDiff = GetSpectralDifference(NoteAmplitudes);
 }
 
 int AMusicParticles1::NoteToBin(float index)
