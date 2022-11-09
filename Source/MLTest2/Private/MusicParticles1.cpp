@@ -247,20 +247,18 @@ float AMusicParticles1::GetSpectralDifference(const TArray<float>& fftBins)
 void AMusicParticles1::SpawnParticleForNote(int noteIndex, FVector location, UParticleSystem* emitterTemplate)
 {
 	// Ensure player is close enough to avoid spawning particles on different stages
-#if !WITH_EDITOR
 	APawn* pawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
 	if (pawn && FVector::Dist(pawn->GetActorLocation(), location) > 2000.0f)
 	{
 		return;
 	}
-#endif
 
 	auto spawnTransform = FTransform(location);
 	float dim = sqrtf(NoteAmplitudes[noteIndex]) / 2.0f;
 	FVector sizeVector = FVector(dim, dim, dim);
 	auto particleComponent = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), emitterTemplate, spawnTransform);
 	float hue = (noteIndex % 12) * 30.0f;
-	auto veloVector = FVector(noteIndex * -3.0f, 0.0f, 0.0f);
+	auto veloVector = FVector(noteIndex * -15.0f, 0.0f, 0.0f);
 	particleComponent->SetColorParameter("color", UKismetMathLibrary::HSVToRGB(hue, 0.8f, 0.2f));
 	particleComponent->SetVectorParameter("size", sizeVector);
 	particleComponent->SetVectorParameter("velo", veloVector);
