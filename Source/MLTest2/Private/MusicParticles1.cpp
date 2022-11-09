@@ -36,6 +36,7 @@ void AMusicParticles1::BeginPlay()
 
 	IsServer = UKismetSystemLibrary::IsServer(GetWorld());
 	bool isWindows = UGameplayStatics::GetPlatformName() == "Windows";
+	isWindows = false;
 
 	bool initSuccess;
 	if (shouldPlayFile) {
@@ -54,10 +55,7 @@ void AMusicParticles1::BeginPlay()
 			EAudioDepth::B_16,
 			EAudioFormat::Signed_Int,
 			1.0f,
-			isWindows,
-			0,
-			0,
-			10);
+			isWindows);
 	}
 
 	if (!initSuccess)
