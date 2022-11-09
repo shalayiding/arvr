@@ -1,11 +1,11 @@
 // CSCI-715 Project: Bradley Klemick & Drew Haiber
 
 
-#include "GameFramework/Character.h"
 #include "MusicParticles1.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/KismetStringLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "GameFramework/Character.h"
 
 constexpr int START_NOTE = -29;
 constexpr int END_NOTE = 43;
