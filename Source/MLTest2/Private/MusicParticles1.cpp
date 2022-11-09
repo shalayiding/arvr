@@ -1,6 +1,7 @@
 // CSCI-715 Project: Bradley Klemick & Drew Haiber
 
 
+#include "GameFramework/Character.h"
 #include "MusicParticles1.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/KismetStringLibrary.h"
@@ -53,7 +54,10 @@ void AMusicParticles1::BeginPlay()
 			EAudioDepth::B_16,
 			EAudioFormat::Signed_Int,
 			1.0f,
-			isWindows);
+			isWindows,
+			0,
+			0,
+			10);
 	}
 
 	if (!initSuccess)
@@ -242,6 +246,15 @@ float AMusicParticles1::GetSpectralDifference(const TArray<float>& fftBins)
 
 void AMusicParticles1::SpawnParticleForNote(int noteIndex, FVector location, UParticleSystem* emitterTemplate)
 {
+	// Ensure player is close enough to avoid spawning particles on different stages
+#if !WITH_EDITOR
+	APawn* pawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
+	if (pawn && FVector::Dist(pawn->GetActorLocation(), location) > 2000.0f)
+	{
+		return;
+	}
+#endif
+
 	auto spawnTransform = FTransform(location);
 	float dim = sqrtf(NoteAmplitudes[noteIndex]) / 2.0f;
 	FVector sizeVector = FVector(dim, dim, dim);
