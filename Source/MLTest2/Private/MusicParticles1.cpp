@@ -252,15 +252,18 @@ void AMusicParticles1::SpawnParticleForNote(int noteIndex, FVector location, UPa
 	}
 
 	auto spawnTransform = FTransform(location);
+	auto particleComponent = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), emitterTemplate, spawnTransform);
+	ParticleSystems[noteIndex] = particleComponent;
+
 	float dim = sqrtf(NoteAmplitudes[noteIndex]) / 2.0f;
 	FVector sizeVector = FVector(dim, dim, dim);
-	auto particleComponent = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), emitterTemplate, spawnTransform);
 	float hue = (noteIndex % 12) * 30.0f;
 	auto veloVector = FVector(noteIndex * -15.0f, 0.0f, 0.0f);
+
 	particleComponent->SetColorParameter("color", UKismetMathLibrary::HSVToRGB(hue, 0.8f, 0.2f));
 	particleComponent->SetVectorParameter("size", sizeVector);
 	particleComponent->SetVectorParameter("velo", veloVector);
-	ParticleSystems[noteIndex] = particleComponent;
+	particleComponent->ResetBurstLists();
 }
 
 int AMusicParticles1::GetSpectralDifferenceMaxIndex(const TArray<float>& fftBins) {
