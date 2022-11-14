@@ -34,7 +34,7 @@ void AMusicParticles1::BeginPlay()
 
 	AAManager = NewObject<UAudioAnalyzerManager>(this, TEXT("AAManager"));
 
-	IsServer = UKismetSystemLibrary::IsServer(GetWorld());
+	bool isServer = UKismetSystemLibrary::IsServer(GetWorld());
 	bool isWindows = UGameplayStatics::GetPlatformName() == "Windows";
 	isWindows = false;
 
@@ -42,10 +42,11 @@ void AMusicParticles1::BeginPlay()
 	if (shouldPlayFile) {
 		initSuccess = AAManager->InitPlayerAudio(AudioFilename);
 	}
-	else if (IsServer)
+	else if (isServer)
 	{
 		initSuccess = AAManager->InitCapturerAudioEx(SampleRate, EAudioDepth::B_16, EAudioFormat::Signed_Int, 1.0f);
 		AAManager->OnCapturedData.AddDynamic(this, &AMusicParticles1::OnGenerateAudio);
+		FGameModeEvents::OnGameModePostLoginEvent().AddUObject(this, &AMusicParticles1::OnPlayerJoin);
 	}
 	else
 	{
@@ -80,7 +81,7 @@ void AMusicParticles1::BeginPlay()
 		AAManager->Play();
 		UE_LOG(LogTemp, Display, TEXT("Playing local test file!"));
 	}
-	else if (IsServer)
+	else if (isServer)
 	{
 		AAManager->StartCapture(false, true);
 		UE_LOG(LogTemp, Display, TEXT("Started recording!"));
@@ -89,20 +90,57 @@ void AMusicParticles1::BeginPlay()
 	{
 		AAManager->OpenStreamCapture(isWindows);
 		UE_LOG(LogTemp, Display, TEXT("Started playback!"));
+
+		auto udpComponent = NewObject<UUDPComponent>(this);
+		udpComponent->Settings.bShouldAutoOpenSend = false;
+		udpComponent->Settings.bShouldAutoOpenReceive = false;
+		udpComponent->OnReceivedBytes.AddDynamic(this, &AMusicParticles1::OnReceivedAudio);
+		if (!udpComponent->OpenReceiveSocket("0.0.0.0", 57212) && GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("Failed to open socket!")));
+		}
+
+		recvComponent = udpComponent;
+	}
+}
+
+void AMusicParticles1::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	if (recvComponent)
+	{
+		recvComponent->CloseReceiveSocket();
 	}
 }
 
 void AMusicParticles1::OnGenerateAudio(const TArray<uint8>& bytes)
 {
-	MulticastReceiveAudio(bytes);
+	sendBuffer.Append(bytes);
+	if (sendBuffer.Num() >= 4096)
+	{
+		for (auto comp : sendComponents)
+		{
+			comp->EmitBytes(sendBuffer);
+		}
+		sendBuffer.Empty();
+	}
 }
 
-void AMusicParticles1::MulticastReceiveAudio_Implementation(const TArray<uint8>& bytes)
+void AMusicParticles1::OnReceivedAudio(const TArray<uint8>& bytes, const FString& ipAddress)
 {
-	if (!IsServer)
-	{
-		AAManager->FeedStreamCapture(bytes);
-	}
+	AAManager->FeedStreamCapture(bytes);
+}
+
+void AMusicParticles1::OnPlayerJoin(AGameModeBase* gameMode, APlayerController* playerController)
+{
+	FString ipAddress = playerController->GetPlayerNetworkAddress();
+
+	auto sendComponent = NewObject<UUDPComponent>(this);
+	sendComponent->Settings.bShouldAutoOpenSend = false;
+	sendComponent->Settings.bShouldAutoOpenReceive = false;
+
+	sendComponents.Add(sendComponent);
+	UE_LOG(LogTemp, Display, TEXT("Opening UDP send socket to %s"), *ipAddress);
+	sendComponent->OpenSendSocket(ipAddress, 57212);
 }
 
 // Called every frame
