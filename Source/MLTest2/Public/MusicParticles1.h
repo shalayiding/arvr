@@ -9,6 +9,9 @@
 #include "Kismet/GameplayStatics.h"
 #include "MPAudioCaptureComponent.h"
 #include "AudioAnalyzerManager.h"
+#include "UDPComponent.h"
+#include "GameFramework/GameModeBase.h"
+#include "GameFramework/PlayerController.h"
 #include "MusicParticles1.generated.h"
 
 class UAudioAnalyzerManager;
@@ -28,6 +31,8 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -44,8 +49,11 @@ public:
 	UFUNCTION()
 	void OnGenerateAudio(const TArray<uint8>& bytes);
 
-	UFUNCTION(NetMulticast, Unreliable)
-	void MulticastReceiveAudio(const TArray<uint8>& bytes);
+	UFUNCTION()
+		void OnReceivedAudio(const TArray<uint8>& bytes, const FString& ipAddress);
+
+	UFUNCTION()
+		void OnPlayerJoin(AGameModeBase* gameMode, APlayerController* playerController);
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadonly)
@@ -72,7 +80,13 @@ private:
 	TArray<FFTBins> fftHist;
 
 	UPROPERTY()
-	bool IsServer;
+	TArray<uint8> sendBuffer;
+
+	UPROPERTY()
+	TArray<UUDPComponent*> sendComponents;
+
+	UPROPERTY()
+	UUDPComponent* recvComponent;
 
 private:
 	int NoteToBin(float index);
