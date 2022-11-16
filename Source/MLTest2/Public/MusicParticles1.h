@@ -12,6 +12,7 @@
 #include "UDPComponent.h"
 #include "GameFramework/GameModeBase.h"
 #include "GameFramework/PlayerController.h"
+#include "SocketSubsystem.h"
 #include "MusicParticles1.generated.h"
 
 class UAudioAnalyzerManager;
@@ -33,7 +34,19 @@ protected:
 
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
-public:	
+public:
+	// UDP Server functions
+	UFUNCTION()
+	void OnGenerateAudio(const TArray<uint8>& bytes);
+	UFUNCTION()
+	void OnUDPSubscriber(const TArray<uint8>& bytes, const FString& ipAddress, int32 port);
+
+	// UDP Client functions
+	UFUNCTION()
+	void OnSendSocketOpened(int32 specifiedPort, int32 boundPort);
+	UFUNCTION()
+	void OnReceivedAudio(const TArray<uint8>& bytes, const FString& ipAddress, int32 port);
+
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
@@ -45,15 +58,6 @@ public:
 
 	UPROPERTY(BlueprintAssignable)
 	FSpawnParticleDelegate SpawnParticleDelegate;
-
-	UFUNCTION()
-	void OnGenerateAudio(const TArray<uint8>& bytes);
-
-	UFUNCTION()
-		void OnReceivedAudio(const TArray<uint8>& bytes, const FString& ipAddress);
-
-	UFUNCTION()
-		void OnPlayerJoin(AGameModeBase* gameMode, APlayerController* playerController);
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadonly)

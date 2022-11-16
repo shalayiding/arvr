@@ -9,7 +9,7 @@ public class MLTest2 : ModuleRules
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore",
-			"AudioCapture", "AudioMixer" });
+			"AudioCapture", "AudioMixer", "Sockets" });
 		
 		PrivateDependencyModuleNames.AddRange(new string[] { "ParallelcubeTaglib", "ParallelcubeAudioAnalyzer",
 			"UDPWrapper"});

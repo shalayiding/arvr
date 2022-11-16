@@ -36,7 +36,6 @@ void AMusicParticles1::BeginPlay()
 
 	bool isServer = UKismetSystemLibrary::IsServer(GetWorld());
 	bool isWindows = UGameplayStatics::GetPlatformName() == "Windows";
-	isWindows = false;
 
 	bool initSuccess;
 	if (shouldPlayFile) {
@@ -46,7 +45,6 @@ void AMusicParticles1::BeginPlay()
 	{
 		initSuccess = AAManager->InitCapturerAudioEx(SampleRate, EAudioDepth::B_16, EAudioFormat::Signed_Int, 1.0f);
 		AAManager->OnCapturedData.AddDynamic(this, &AMusicParticles1::OnGenerateAudio);
-		FGameModeEvents::OnGameModePostLoginEvent().AddUObject(this, &AMusicParticles1::OnPlayerJoin);
 	}
 	else
 	{
@@ -85,6 +83,18 @@ void AMusicParticles1::BeginPlay()
 	{
 		AAManager->StartCapture(false, true);
 		UE_LOG(LogTemp, Display, TEXT("Started recording!"));
+
+		auto udpComponent = NewObject<UUDPComponent>(this);
+		udpComponent->Settings.bShouldAutoOpenSend = false;
+		udpComponent->Settings.bShouldAutoOpenReceive = false;
+		udpComponent->OnReceivedBytes.AddDynamic(this, &AMusicParticles1::OnUDPSubscriber);
+		recvComponent = udpComponent;
+
+		if (!udpComponent->OpenReceiveSocket("0.0.0.0", 57212))
+		{
+			if (GEngine)
+				GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("Failed to open receive socket!")));
+		}
 	}
 	else
 	{
@@ -94,13 +104,17 @@ void AMusicParticles1::BeginPlay()
 		auto udpComponent = NewObject<UUDPComponent>(this);
 		udpComponent->Settings.bShouldAutoOpenSend = false;
 		udpComponent->Settings.bShouldAutoOpenReceive = false;
+		udpComponent->Settings.bShouldOpenReceiveToBoundSendPort = true;
+		udpComponent->OnSendSocketOpened.AddDynamic(this, &AMusicParticles1::OnSendSocketOpened);
 		udpComponent->OnReceivedBytes.AddDynamic(this, &AMusicParticles1::OnReceivedAudio);
-		if (!udpComponent->OpenReceiveSocket("0.0.0.0", 57212) && GEngine)
-		{
-			GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("Failed to open socket!")));
-		}
-
 		recvComponent = udpComponent;
+
+		FString serverIP = UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetServerNetworkAddress();
+		if (!udpComponent->OpenSendSocket(serverIP, 57212))
+		{
+			if (GEngine)
+				GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("Failed to open send socket!")));
+		}
 	}
 }
 
@@ -111,6 +125,8 @@ void AMusicParticles1::EndPlay(const EEndPlayReason::Type EndPlayReason)
 		recvComponent->CloseReceiveSocket();
 	}
 }
+
+// UDP Server functions
 
 void AMusicParticles1::OnGenerateAudio(const TArray<uint8>& bytes)
 {
@@ -125,22 +141,53 @@ void AMusicParticles1::OnGenerateAudio(const TArray<uint8>& bytes)
 	}
 }
 
-void AMusicParticles1::OnReceivedAudio(const TArray<uint8>& bytes, const FString& ipAddress)
+void AMusicParticles1::OnUDPSubscriber(const TArray<uint8>& bytes, const FString& ipAddress, int32 port)
 {
-	AAManager->FeedStreamCapture(bytes);
-}
-
-void AMusicParticles1::OnPlayerJoin(AGameModeBase* gameMode, APlayerController* playerController)
-{
-	FString ipAddress = playerController->GetPlayerNetworkAddress();
-
 	auto sendComponent = NewObject<UUDPComponent>(this);
 	sendComponent->Settings.bShouldAutoOpenSend = false;
 	sendComponent->Settings.bShouldAutoOpenReceive = false;
 
 	sendComponents.Add(sendComponent);
-	UE_LOG(LogTemp, Display, TEXT("Opening UDP send socket to %s"), *ipAddress);
-	sendComponent->OpenSendSocket(ipAddress, 57212);
+	if (GEngine)
+		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::White, FString::Printf(TEXT("Starting audio output to %s:%d"), *ipAddress, port));
+	sendComponent->OpenSendSocket(ipAddress, port);
+}
+
+// UDP Client functions
+
+void AMusicParticles1::OnSendSocketOpened(int32 specifiedPort, int32 boundPort)
+{
+	TArray<TSharedPtr<FInternetAddr>> addrs;
+	ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->GetLocalAdapterAddresses(addrs);
+	FString theIP = "";
+	for (TSharedPtr<FInternetAddr> addr : addrs)
+	{
+		FString bindableIP = addr.Get()->ToString(false);
+		if (bindableIP.StartsWith("129"))
+		{
+			theIP = bindableIP;
+		}
+	}
+
+	if (GEngine)
+		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::White,
+			FString::Printf(TEXT("Opening receive socket %s:%d"), *theIP, boundPort));
+	if (!recvComponent || !recvComponent->OpenReceiveSocket(theIP, boundPort))
+	{
+		if (GEngine)
+			GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red,
+				FString::Printf(TEXT("Failed to open receive socket! %s:%d"), *theIP, boundPort));
+	}
+
+	// Tell server which port was chosen (no longer used)
+	uint8* portBytes = (uint8*)&boundPort;
+	TArray<uint8> portArray(portBytes, 4);
+	recvComponent->EmitBytes(portArray);
+}
+
+void AMusicParticles1::OnReceivedAudio(const TArray<uint8>& bytes, const FString& ipAddress, int32 port)
+{
+	AAManager->FeedStreamCapture(bytes);
 }
 
 // Called every frame
