@@ -340,10 +340,12 @@ void AMusicParticles1::SpawnParticleForNote(int noteIndex, FVector location, UPa
 	auto particleComponent = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), emitterTemplate, spawnTransform);
 	ParticleSystems[noteIndex] = particleComponent;
 
-	float dim = sqrtf(NoteAmplitudes[noteIndex]) / 2.0f;
+	float dim = sqrtf(NoteAmplitudes[noteIndex]) / 3.0f;
 	FVector sizeVector = FVector(dim, dim, dim);
 	float hue = (noteIndex % 12) * 30.0f;
-	auto veloVector = FVector(noteIndex * -15.0f, 0.0f, 0.0f);
+	float yMod = FMath::RandRange(-2.0f, 2.0f);
+	float zMod = FMath::RandRange(0.0f, 2.0f);
+	auto veloVector = FVector(noteIndex * -12.0f, noteIndex * yMod, noteIndex * zMod);
 
 	particleComponent->SetColorParameter("color", UKismetMathLibrary::HSVToRGB(hue, 0.8f, 0.2f));
 	particleComponent->SetVectorParameter("size", sizeVector);
