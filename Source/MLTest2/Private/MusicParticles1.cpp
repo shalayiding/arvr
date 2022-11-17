@@ -9,6 +9,7 @@
 
 constexpr int START_NOTE = -29;
 constexpr int END_NOTE = 43;
+constexpr int UDP_CLIENT_PORT = 21953;
 
 // Sets default values
 AMusicParticles1::AMusicParticles1()
@@ -150,7 +151,7 @@ void AMusicParticles1::OnUDPSubscriber(const TArray<uint8>& bytes, const FString
 	sendComponents.Add(sendComponent);
 	if (GEngine)
 		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::White, FString::Printf(TEXT("Starting audio output to %s:%d"), *ipAddress, port));
-	sendComponent->OpenSendSocket(ipAddress, port);
+	sendComponent->OpenSendSocket(ipAddress, UDP_CLIENT_PORT);
 }
 
 // UDP Client functions
@@ -169,6 +170,7 @@ void AMusicParticles1::OnSendSocketOpened(int32 specifiedPort, int32 boundPort)
 		}
 	}
 
+	boundPort = UDP_CLIENT_PORT;
 	if (GEngine)
 		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::White,
 			FString::Printf(TEXT("Opening receive socket %s:%d"), *theIP, boundPort));
